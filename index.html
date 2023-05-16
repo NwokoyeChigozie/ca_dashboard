@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container-scroller">
+      <nav class="sidebar sidebar-offcanvas" id="sidebar"></nav>
+      <div class="container-fluid page-body-wrapper">
+        <nav class="navbar col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row">
+          <div
+            class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between"
+          >
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+          </div>
+        </nav>
+        <div class="main-panel">
+          <div class="content-wrapper pb-0">
+            <div class="page-header flex-wrap">
+              <h3 class="mb-0">Hi, welcome back!</h3>
+              <div class="d-flex"></div>
+            </div>
+            <div class="row">
+              <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                <div class="row">
+                  <div
+                    class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3"
+                  >
+                    <div class="card bg-warning">
+                      <div class="card-body px-3 py-4">
+                        <div
+                          class="d-flex justify-content-between align-items-start"
+                        >
+                          <div class="color-card">
+                            <p class="mb-0 color-card-head">Wallet Balance</p>
+                            <h2 class="text-white">
+                              USD <span id="wallet_balance">00</span>
+                            </h2>
+                          </div>
+                          <i
+                            class="card-icon-indicator mdi mdi-basket bg-inverse-icon-warning"
+                          ></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3"
+                  >
+                    <div class="card bg-danger">
+                      <div class="card-body px-3 py-4">
+                        <div
+                          class="d-flex justify-content-between align-items-start"
+                        >
+                          <div class="color-card">
+                            <p class="mb-0 color-card-head">Completed</p>
+                            <h2 class="text-white">
+                              USD <span id="completed_month_year">00</span>
+                            </h2>
+                          </div>
+                          <i
+                            class="card-icon-indicator mdi mdi-cube-outline bg-inverse-icon-danger"
+                          ></i>
+                        </div>
+                        <h6 class="text-white">
+                          <span id="completed_month_year_rate">0</span>% Since
+                          last month
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3 pb-lg-0 pb-xl-3"
+                  >
+                    <div class="card bg-primary">
+                      <div class="card-body px-3 py-4">
+                        <div
+                          class="d-flex justify-content-between align-items-start"
+                        >
+                          <div class="color-card">
+                            <p class="mb-0 color-card-head">Pending</p>
+                            <h2 class="text-white">
+                              USD <span id="pending_month_year">00</span>
+                            </h2>
+                          </div>
+                          <i
+                            class="card-icon-indicator mdi mdi-briefcase-outline bg-inverse-icon-primary"
+                          ></i>
+                        </div>
+                        <h6 class="text-white">
+                          <span id="pending_month_year_rate">00</span>% Since
+                          last month
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0">
+                    <div class="card bg-success">
+                      <div class="card-body px-3 py-4">
+                        <div
+                          class="d-flex justify-content-between align-items-start"
+                        >
+                          <div class="color-card">
+                            <p class="mb-0 color-card-head">Today's Income</p>
+                            <h2 class="text-white">
+                              USD <span id="today_income">00</span>
+                            </h2>
+                          </div>
+                          <i
+                            class="card-icon-indicator mdi mdi-account-circle bg-inverse-icon-success"
+                          ></i>
+                        </div>
+                        <h6 class="text-white">
+                          <span id="today_income_rate">00</span>% Since last
+                          month
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-9 stretch-card grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-sm-7">
+                        <!-- <h5>Survey</h5> -->
+                        <p class="text-muted">
+                          Show overview
+                          <select
+                            id="monthSelect"
+                            onchange="handleDateChange()"
+                          >
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                          </select>
+                          <select id="yearSelect" onchange="handleDateChange()">
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <!-- Add more options for years if needed -->
+                          </select>
+                          - Date
+                        </p>
+                      </div>
+
+                      <div class="col-sm-5 text-md-right">
+                        <button
+                          type="button"
+                          class="btn btn-icon-text mb-3 mb-sm-0 btn-inverse-primary font-weight-normal"
+                          onclick="createTrxHistoryDoc()"
+                        >
+                          <i class="mdi mdi-email btn-icon-prepend"></i>Download
+                          Trnx History
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <div class="card mb-3 mb-sm-0">
+                          <div class="card-body py-3 px-4">
+                            <p class="m-0 survey-head">Total Earnings</p>
+                            <div
+                              class="d-flex justify-content-between align-items-end flot-bar-wrapper"
+                            >
+                              <div>
+                                <h3 class="m-0 survey-value">
+                                  USD <span id="total_earnings">00</span>
+                                </h3>
+                              </div>
+                              <div id="earningChart" class="flot-chart"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="card mb-3 mb-sm-0">
+                          <div class="card-body py-3 px-4">
+                            <p class="m-0 survey-head">Today's Transactions</p>
+                            <div
+                              class="d-flex justify-content-between align-items-end flot-bar-wrapper"
+                            >
+                              <div>
+                                <h3 class="m-0 survey-value">
+                                  USD <span id="today_transactions">00</span>
+                                </h3>
+                              </div>
+                              <div id="productChart" class="flot-chart"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-4">
+                        <div class="card">
+                          <div class="card-body py-3 px-4">
+                            <p class="m-0 survey-head">Failed Transactions</p>
+                            <div
+                              class="d-flex justify-content-between align-items-end flot-bar-wrapper"
+                            >
+                              <div>
+                                <h3 class="m-0 survey-value">
+                                  USD <span id="failed_transactions">00</span>
+                                </h3>
+                              </div>
+                              <div id="orderChart" class="flot-chart"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row my-3">
+                      <div class="col-sm-12">
+                        <div class="flot-chart-wrapper">
+                          <div id="flotChart" class="flot-chart">
+                            <canvas class="flot-base"></canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-4">
+                        <p class="mb-0 text-muted">Sales Revenue</p>
+                        <h5 class="d-inline-block survey-value mb-0">
+                          USD <span id="sales_revenue">00</span>
+                        </h5>
+                        <br />
+                        <p class="d-inline-block text-danger mb-0">All Time</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-12 col-sm-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body px-0 overflow-auto">
+                    <h4 class="card-title pl-4">Transactions</h4>
+                    <div class="table-responsive">
+                      <table class="table" id="tx_history_table">
+                        <thead class="bg-light">
+                          <tr>
+                            <th>Wallet</th>
+                            <th>Platform</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Website</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                    <a class="text-black mt-3 d-block pl-4">
+                      <button
+                        type="button"
+                        id="more_history"
+                        class="btn btn-sm ml-3 btn-primary"
+                      >
+                        View more transactions
+                      </button>
+                      <i class="mdi mdi-chevron-right"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <footer class="footer">
+            <div
+              class="d-sm-flex justify-content-center justify-content-sm-between"
+            ></div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="./env.js"></script>
+  <script src="./js/index.js"></script>
+  <script src="./js/requests.js"></script>
+  <script src="./js/action.js"></script>
+</html>
