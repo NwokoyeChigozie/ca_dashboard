@@ -4,7 +4,7 @@ async function convertEthToUsd(amountInEth) {
   return parseFloat(amountInUsd).toFixed(2);
 }
 
-async function getEthWalletBalance(address) {
+async function getEthWalletBalanceF(address) {
   if (typeof window.ethereum === "undefined") {
     return "Web3 is not available. Please install MetaMask or use a compatible browser.";
   }
@@ -14,11 +14,19 @@ async function getEthWalletBalance(address) {
   return etherAmount;
 }
 
-async function checkTransactionStatus(transactionHash, createdAt) {
-  if (typeof window.ethereum === "undefined") {
-    return "Web3 is not available. Please install MetaMask or use a compatible browser.";
-  }
-  const web3 = new Web3(window.ethereum);
+async function getEthWalletBalance(address, web3) {
+  var web3 = new Web3(web3Provider);
+  const balance = await web3.eth.getBalance(address);
+  const etherAmount = web3.utils.fromWei(balance, "ether");
+  return etherAmount;
+}
+
+async function checkTransactionStatus(transactionHash, createdAt, web3) {
+  const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000;
+  const threeDaysInMillis = 2 * 24 * 60 * 60 * 1000;
+  const transactionDate = new Date(createdAt);
+  const currentDate = new Date();
+  const timeDifference = currentDate - transactionDate;
   try {
     const receipt = await web3.eth.getTransactionReceipt(transactionHash);
 
@@ -26,11 +34,6 @@ async function checkTransactionStatus(transactionHash, createdAt) {
       // Transaction is successful, update the status
       updateTransactionStatus(transactionHash, "completed");
     } else {
-      const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000;
-      const transactionDate = new Date(createdAt);
-      const currentDate = new Date();
-      const timeDifference = currentDate - transactionDate;
-
       if (timeDifference >= twoDaysInMillis) {
         // Transaction has lasted more than 2 days, update the status to failed
         updateTransactionStatus(transactionHash, "failed");
@@ -38,6 +41,11 @@ async function checkTransactionStatus(transactionHash, createdAt) {
     }
   } catch (error) {
     console.log(error);
+    console.log("transactionDate", transactionDate);
+    if (timeDifference >= threeDaysInMillis) {
+      // Transaction has lasted more than 2 days, update the status to failed
+      updateTransactionStatus(transactionHash, "failed");
+    }
   }
 }
 

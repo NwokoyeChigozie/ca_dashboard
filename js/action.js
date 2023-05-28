@@ -12,12 +12,15 @@ const failedTransactionsId = "failed_transactions";
 const salesRevenueId = "sales_revenue";
 const moreHistoryId = "more_history";
 const txHistoryTableId = "tx_history_table";
+const infuraUrl = `https://${ETHNETWORK}.infura.io/v3/${INFURA_API_KEY}`;
+var web3Provider = new Web3.providers.HttpProvider(infuraUrl);
+var web3 = new Web3(web3Provider);
 
 let page = 1;
-const limit = 2;
+const limit = 5;
 
 async function updateWalletBalance() {
-  const balance = await getEthWalletBalance(address);
+  const balance = await getEthWalletBalance(address, web3);
   const amountInUsd = await convertEthToUsd(parseFloat(balance));
   const walletBalanceSpan = document.getElementById(walletBalanceSpanId);
   walletBalanceSpan.innerText = amountInUsd;
@@ -84,8 +87,9 @@ async function updateTransactionsList() {
 
 async function resolvePendingTransactions() {
   const data = await getPendingTransactions();
+  console.log("data", data);
   for (const obj of data) {
-    checkTransactionStatus(obj.hash, obj.created_at);
+    checkTransactionStatus(obj.hash, obj.created_at, web3);
   }
 }
 
